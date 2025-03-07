@@ -30,6 +30,7 @@
 #include <rapidjson/filewritestream.h>
 #include <rapidjson/ostreamwrapper.h>
 #include <rapidjson/writer.h>
+#include <sys/types.h>
 
 #include "client_backend/client_backend.h"
 #include "profile_data_collector.h"
@@ -69,6 +70,10 @@ ProfileDataExporter::ConvertToJson(
     rapidjson::Value experiment(rapidjson::kObjectType);
     rapidjson::Value requests(rapidjson::kArrayType);
     rapidjson::Value window_boundaries(rapidjson::kArrayType);
+
+    // Get start time
+    start_time = raw_experiment.window_boundaries[0];
+    std::cout << "Start: " << start_time << std::endl;
 
     AddExperiment(entry, experiment, raw_experiment);
     AddRequests(entry, requests, raw_experiment);
@@ -119,7 +124,8 @@ ProfileDataExporter::AddRequests(
     rapidjson::Value request(rapidjson::kObjectType);
     rapidjson::Value timestamp;
 
-    timestamp.SetUint64(raw_request.start_time_.time_since_epoch().count());
+    timestamp.SetUint64(
+        raw_request.start_time_.time_since_epoch().count() - start_time);
     request.AddMember("timestamp", timestamp, document_.GetAllocator());
 
     if (raw_request.sequence_id_ != 0) {
@@ -157,7 +163,7 @@ ProfileDataExporter::AddResponseTimestamps(
 {
   for (auto& timestamp : timestamps) {
     rapidjson::Value timestamp_json;
-    timestamp_json.SetUint64(timestamp.time_since_epoch().count());
+    timestamp_json.SetUint64(timestamp.time_since_epoch().count() - start_time);
     timestamps_json.PushBack(timestamp_json, document_.GetAllocator());
   }
 }
@@ -292,7 +298,7 @@ ProfileDataExporter::AddWindowBoundaries(
 {
   for (auto& window : raw_experiment.window_boundaries) {
     rapidjson::Value w;
-    w.SetUint64(window);
+    w.SetUint64(window - start_time);
     window_boundaries.PushBack(w, document_.GetAllocator());
   }
   entry.AddMember(

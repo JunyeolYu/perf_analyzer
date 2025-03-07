@@ -27,6 +27,7 @@
 #pragma once
 
 #include <rapidjson/document.h>
+#include <sys/types.h>
 
 #include "client_backend/client_backend.h"
 #include "profile_data_collector.h"
@@ -101,6 +102,8 @@ class ProfileDataExporter {
   void ClearDocument();
 
   rapidjson::Document document_{};
+
+  u_int64_t start_time;
 
 #ifndef DOCTEST_CONFIG_DISABLE
   friend NaggyMockProfileDataExporter;
