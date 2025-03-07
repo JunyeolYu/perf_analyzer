@@ -180,6 +180,7 @@ CLParser::Usage(const std::string& msg)
   std::cerr << "IV. OTHER OPTIONS: " << std::endl;
   std::cerr << "\t-f <filename for storing report in csv format>" << std::endl;
   std::cerr << "\t--profile-export-file <path>" << std::endl;
+  std::cerr << "\t--simple " << std::endl;
   std::cerr << "\t-H <HTTP header>" << std::endl;
   std::cerr << "\t--streaming" << std::endl;
   std::cerr << "\t--grpc-compression-algorithm <compression_algorithm>"
@@ -723,6 +724,12 @@ CLParser::Usage(const std::string& msg)
                    9)
             << std::endl;
   std::cerr
+      << FormatMessage(
+             " --simple: Enables the use simplified profile. It contains only "
+             "timestamps.",
+             18)
+      << std::endl;
+  std::cerr
       << std::setw(9) << std::left << " -H: "
       << FormatMessage(
              "The header will be added to HTTP requests (ignored for GRPC "
@@ -941,6 +948,7 @@ CLParser::ParseCommandLine(int argc, char** argv)
       {"fixed-schedule", no_argument, 0, long_option_idx_base + 64},
       {"session-concurrency", required_argument, 0, long_option_idx_base + 65},
       {"grpc-method", required_argument, 0, long_option_idx_base + 66},
+      {"simple", no_argument, 0, long_option_idx_base + 67},
       {0, 0, 0, 0}};
 
   // Parse commandline...
@@ -1758,6 +1766,10 @@ CLParser::ParseCommandLine(int argc, char** argv)
                 "<package>.<service>/<method>.");
           }
           params_->grpc_method = rpc;
+          break;
+        }
+        case long_option_idx_base + 67: {
+          params_->simple = true;
           break;
         }
         case 'v':

@@ -310,7 +310,8 @@ PerfAnalyzer::CreateAnalyzerObjects()
   FAIL_IF_ERR(
       pa::ProfileDataExporter::Create(&exporter_),
       "failed to create profile data exporter");
-
+  if (params_->simple)
+    exporter_->set_simple();
   FAIL_IF_ERR(
       pa::InferenceProfiler::Create(
           params_->verbose, params_->stability_threshold,

@@ -49,6 +49,7 @@ struct PerfAnalyzerParameters {
   InferenceLoadMode inference_load_mode{InferenceLoadMode::None};
 
   bool streaming = false;
+  bool simple = false;
   size_t max_threads = 4;
   bool max_threads_specified = false;
   size_t sequence_length = 20;  // average length of a sentence

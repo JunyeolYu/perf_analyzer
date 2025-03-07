@@ -56,6 +56,7 @@ class ProfileDataExporter {
       const std::vector<ProfileDataCollector::Experiment>& raw_experiments,
       std::string& raw_version, std::string& file_path,
       cb::BackendKind& service_kind, std::string& endpoint);
+  void set_simple() { simple = true; }
 
  private:
   ProfileDataExporter() = default;
@@ -103,6 +104,8 @@ class ProfileDataExporter {
 
   rapidjson::Document document_{};
 
+  // for simplified profile log
+  bool simple = false;
   u_int64_t start_time;
 
 #ifndef DOCTEST_CONFIG_DISABLE

@@ -134,22 +134,24 @@ ProfileDataExporter::AddRequests(
       request.AddMember("sequence_id", sequence_id, document_.GetAllocator());
     }
 
-    rapidjson::Value request_inputs(rapidjson::kObjectType);
-    AddRequestInputs(request_inputs, raw_request.request_inputs_);
-    request.AddMember(
-        "request_inputs", request_inputs, document_.GetAllocator());
-
+    if (!simple) {
+      rapidjson::Value request_inputs(rapidjson::kObjectType);
+      AddRequestInputs(request_inputs, raw_request.request_inputs_);
+      request.AddMember(
+          "request_inputs", request_inputs, document_.GetAllocator());
+    }
     rapidjson::Value response_timestamps(rapidjson::kArrayType);
     AddResponseTimestamps(
         response_timestamps, raw_request.response_timestamps_);
     request.AddMember(
         "response_timestamps", response_timestamps, document_.GetAllocator());
 
-    rapidjson::Value response_outputs(rapidjson::kArrayType);
-    AddResponseOutputs(response_outputs, raw_request.response_outputs_);
-    request.AddMember(
-        "response_outputs", response_outputs, document_.GetAllocator());
-
+    if (!simple) {
+      rapidjson::Value response_outputs(rapidjson::kArrayType);
+      AddResponseOutputs(response_outputs, raw_request.response_outputs_);
+      request.AddMember(
+          "response_outputs", response_outputs, document_.GetAllocator());
+    }
     requests.PushBack(request, document_.GetAllocator());
   }
   entry.AddMember("requests", requests, document_.GetAllocator());
